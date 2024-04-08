@@ -1,4 +1,5 @@
 <script>
+  import fileNames from "../data/file_names.json";
   import { onMount, getContext } from "svelte";
 
   const { getMap } = getContext("map");
@@ -7,17 +8,17 @@
   export let displayAreaLevel;
 
   let scoreLayer = "Hide";
-  let PMTILES_URL =
-    "https://storage.googleapis.com/very-nice-tiles-bucket/oa_scores.pmtiles";
-  const source = "oa_scores";
+  let sourceLayer = fileNames[0];
   const layer = "oa_scores";
 
   onMount(async () => {
-    map.addSource("oa_scores", {
-      type: "vector",
-      url: "pmtiles://" + PMTILES_URL,
-    });
-    setLayer();
+    for (let i = 0; i < fileNames.length; i++) {
+      map.addSource(fileNames[i], {
+        type: "vector",
+        url: "pmtiles://" + "https://storage.googleapis.com/very-nice-tiles-bucket/testing-postprocessing-methods/" + fileNames[i] + ".pmtiles",
+      }); 
+    } 
+    // setLayer();
   });
 
   function setLayer() {
@@ -28,8 +29,8 @@
     if (scoreLayer != "Hide") {
       map.addLayer({
         id: layer,
-        source: source,
-        "source-layer": "oa_scores",
+        source: sourceLayer,
+        "source-layer": "temp",
         type: "fill",
         paint: {
           "fill-color": [
@@ -65,28 +66,71 @@
   }
 
   function scoreTypes() {
-    let purposes = [
-      "Business",
-      "Education",
-      "Shopping",
-      "Residential",
-      "Entertainment",
-    ];
-    let modes = ["Driving", "Walking", "Cycling", "PT"];
-    let all = ["Hide", "Overall"];
-
-    for (let mode of modes) {
-      all.push(`Overall ${mode}`);
-    }
-
-    for (let purpose of purposes) {
-      all.push(`Overall ${purpose}`);
-      for (let mode of modes) {
-        all.push(`${purpose} by ${mode}`);
-      }
-    }
-    return all;
+    return ['Hide',
+            'oa11cd',
+            'Business_car',
+            'Education_car',
+            'Health_car',
+            'Entertainment_car',
+            'Shopping_car',
+            'Residential_car',
+            'Business_walk',
+            'Education_walk',
+            'Health_walk',
+            'Entertainment_walk',
+            'Shopping_walk',
+            'Residential_walk',
+            'Business_pt',
+            'Education_pt',
+            'Health_pt',
+            'Entertainment_pt',
+            'Shopping_pt',
+            'Residential_pt',
+            'Business_cycling',
+            'Education_cycling',
+            'Health_cycling',
+            'Entertainment_cycling',
+            'Shopping_cycling',
+            'Residential_cycling',
+            'Overall_pt',
+            'Overall_cycling',
+            'Overall_car',
+            'Overall_walk',
+            'Overall_Business',
+            'Overall_Education',
+            'Overall_Health',
+            'Overall_Entertainment',
+            'Overall_Shopping',
+            'Overall_Residential',
+            'Overall_Overall']
   }
+  function fileSources() {
+    return fileNames;
+  }
+
+  // function scoreTypes() {
+  //   let purposes = [
+  //     "Business",
+  //     "Education",
+  //     "Shopping",
+  //     "Residential",
+  //     "Entertainment",
+  //   ];
+  //   let modes = ["Driving", "Walking", "Cycling", "PT"];
+  //   let all = ["Hide", "Overall"];
+
+  //   for (let mode of modes) {
+  //     all.push(`Overall ${mode}`);
+  //   }
+
+  //   for (let purpose of purposes) {
+  //     all.push(`Overall ${purpose}`);
+  //     for (let mode of modes) {
+  //       all.push(`${purpose} by ${mode}`);
+  //     }
+  //   }
+  //   return all;
+  // }
 
   function resetScoreLayer() {
     scoreLayer = "Hide";
@@ -95,7 +139,7 @@
 </script>
 
 {#if displayAreaLevel == "OA"}
-  <div class="govuk-form-group" style="display: flex;">
+  <div class="govuk-form-group" style="display: flex; top: 30px; left: 10px;">
     <label
       class="govuk-label"
       for="scoreLayer"
@@ -115,6 +159,26 @@
       {/each}
     </select>
   </div>
+  <div class="govuk-form-group" style="display: flex; top: 90px; left: 10px;">
+    <label
+      class="govuk-label"
+      for="scoreLayer"
+      style="margin-right: 10px; margin-top: 8px; font-size: 1rem;"
+    >
+      Source:
+    </label>
+    <select
+      class="govuk-select"
+      id="sourceLayer"
+      name="sourceLayer"
+      bind:value={sourceLayer}
+      on:change={setLayer}
+    >
+      {#each fileSources() as x}
+        <option value={x}>{x}</option>
+      {/each}
+    </select>
+  </div>
 {:else}
   {resetScoreLayer()}
 {/if}
@@ -123,8 +187,6 @@
   div {
     z-index: 1;
     position: absolute;
-    top: 30px;
-    left: 10px;
     background: white;
     padding: 5px;
     border-radius: 10px;
