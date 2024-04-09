@@ -21,6 +21,23 @@
     // setLayer();
   });
 
+  // hover over score change
+  let OA;
+  let hoverScore;
+  map.on("mousemove", layer, function (e) {
+    if (e.features.length > 0) {
+      OA = e.features[0].properties["oa11cd"];
+      hoverScore = e.features[0].properties[scoreLayer];
+
+      console.log(OA);
+      console.log(hoverScore);
+    }
+  });
+  map.on("mouseleave", layer, function () {
+    OA = null;
+    hoverScore = null;
+  });
+
   function setLayer() {
     console.log(scoreLayer);
     if (map.getLayer(layer)) {
@@ -182,6 +199,13 @@
 {:else}
   {resetScoreLayer()}
 {/if}
+
+<div style="display: flex; top: 30px; right: 10px; font-size: 1rem; padding: 20px;">
+  OA: {OA}
+  <br/>
+  {scoreLayer}: {hoverScore}
+
+</div>
 
 <style>
   div {
