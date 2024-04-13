@@ -38,48 +38,63 @@
     hoverScore = null;
   });
 
+  function sort_layers() {
+    let layers = map.getStyle().layers;
+    console.log("layers")
+    console.log(layers)
+    for (let i = 0; i < layers.length; i++) {
+      if (["road_minor", "background"].includes(layers[i]["id"]) ) {
+        console.log(layers[i]["id"])
+      } else {
+        map.removeLayer(layers[i]["id"]);
+      }
+    } 
+    
+  }
+
   function setLayer() {
     console.log(scoreLayer);
-    if (map.getLayer(layer)) {
-      map.removeLayer(layer);
-    }
-    if (scoreLayer != "Hide") {
-      map.addLayer({
-        id: layer,
-        source: sourceLayer,
-        "source-layer": "temp",
-        type: "fill",
-        paint: {
-          "fill-color": [
-            "interpolate",
-            ["linear"],
-            ["get", scoreLayer],
-            10,
-            "#67001f",
-            20,
-            "#b2182b",
-            30,
-            "#d6604d",
-            40,
-            "#f4a582",
-            50,
-            "#fddbc7",
-            60,
-            "#d1e5f0",
-            70,
-            "#92c5de",
-            80,
-            "#4393c3",
-            90,
-            "#2166ac",
-            100,
-            "#053061",
-          ],
-          // "fill-outline-color": "rgba(0, 0, 0, 0.2)",
-          "fill-opacity": 0.7,
-        },
-      });
-    }
+    sort_layers()
+    // if (map.getLayer(layer)) {
+    //   map.removeLayer(layer);
+    // }
+    // if (scoreLayer != "Hide") {
+    //   map.addLayer({
+    //     id: layer,
+    //     source: sourceLayer,
+    //     "source-layer": "temp",
+    //     type: "fill",
+    //     paint: {
+    //       "fill-color": [
+    //         "interpolate",
+    //         ["linear"],
+    //         ["get", scoreLayer],
+    //         10,
+    //         "#67001f",
+    //         20,
+    //         "#b2182b",
+    //         30,
+    //         "#d6604d",
+    //         40,
+    //         "#f4a582",
+    //         50,
+    //         "#fddbc7",
+    //         60,
+    //         "#d1e5f0",
+    //         70,
+    //         "#92c5de",
+    //         80,
+    //         "#4393c3",
+    //         90,
+    //         "#2166ac",
+    //         100,
+    //         "#053061",
+    //       ],
+    //       // "fill-outline-color": "rgba(0, 0, 0, 0.2)",
+    //       "fill-opacity": 0.7,
+    //     },
+    //   });
+    // }
   }
 
   function scoreTypes() {

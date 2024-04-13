@@ -32,6 +32,9 @@
     map.on("mouseleave", layer, function () {
       hoveredAreaScores = null;
     });
+    let layers = map.layers;
+    console.log("layers")
+    console.log(layers)
   });
 
   function setLayer() {
