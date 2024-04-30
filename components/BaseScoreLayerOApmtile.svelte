@@ -44,6 +44,14 @@
       map.removeLayer(layer);
     }
     if (scoreLayer != "Hide") {
+      let scaling_factors;
+      if (sourceLayer.includes("diff")){
+        scaling_factors = [-40, -30, -20, -10, 0, 10, 20, 30, 40, 50];
+      } else {
+        scaling_factors = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+      }
+      console.log("scaling_factors")
+      console.log(scaling_factors)
       map.addLayer({
         id: layer,
         source: sourceLayer,
@@ -54,25 +62,25 @@
             "interpolate",
             ["linear"],
             ["get", scoreLayer],
-            10,
+            scaling_factors[0],
             "#67001f",
-            20,
+            scaling_factors[1],
             "#b2182b",
-            30,
+            scaling_factors[2],
             "#d6604d",
-            40,
+            scaling_factors[3],
             "#f4a582",
-            50,
+            scaling_factors[4],
             "#fddbc7",
-            60,
+            scaling_factors[5],
             "#d1e5f0",
-            70,
+            scaling_factors[6],
             "#92c5de",
-            80,
+            scaling_factors[7],
             "#4393c3",
-            90,
+            scaling_factors[8],
             "#2166ac",
-            100,
+            scaling_factors[9],
             "#053061",
           ],
           // "fill-outline-color": "rgba(0, 0, 0, 0.2)",
