@@ -178,8 +178,12 @@
     setLayer();
   }
   function apply_custom_range() {
+    
 
     if (custom_min && custom_max) {
+      if (custom_max < custom_min) {
+        window.alert(`max less than min`);
+      }
       let max_to_min = custom_max - custom_min
       scaling_factors = [];
       for (let i = 1; i <= 10; i++) {
