@@ -20,21 +20,25 @@
     } 
     // setLayer();
   });
-
+  let scaling_factors;
   // hover over score change
-  let OA;
+  let geo;
   let hoverScore;
   map.on("mousemove", layer, function (e) {
     if (e.features.length > 0) {
-      OA = e.features[0].properties["oa11cd"];
+      if (sourceLayer.includes("lsoa")) {
+        geo = e.features[0].properties["LSOA11CD"];
+      } else {
+        geo = e.features[0].properties["oa11cd"];
+      }
       hoverScore = e.features[0].properties[scoreLayer];
 
-      console.log(OA);
-      console.log(hoverScore);
+      // console.log(geo);
+      // console.log(hoverScore);
     }
   });
   map.on("mouseleave", layer, function () {
-    OA = null;
+    geo = null;
     hoverScore = null;
   });
 
@@ -44,12 +48,15 @@
       map.removeLayer(layer);
     }
     if (scoreLayer != "Hide") {
-      let scaling_factors;
-      if (sourceLayer.includes("diff")){
-        scaling_factors = [-40, -30, -20, -10, 0, 10, 20, 30, 40, 50];
+      if (custom_min && custom_max) {
+
       } else {
-        scaling_factors = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-      }
+        if (sourceLayer.includes("diff")){
+          scaling_factors = [-40, -30, -20, -10, 0, 10, 20, 30, 40, 50];
+        } else {
+          scaling_factors = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+        }
+      } 
       console.log("scaling_factors")
       console.log(scaling_factors)
       map.addLayer({
@@ -93,6 +100,7 @@
   function scoreTypes() {
     return ['Hide',
             'oa11cd',
+            'LSOA11CD',
             'Business_car',
             'Education_car',
             'Health_car',
@@ -161,6 +169,27 @@
     scoreLayer = "Hide";
     setLayer();
   }
+  let custom_min = null;
+  let custom_max = null;
+
+  function reset_custom_scores() {
+    custom_min = null;
+    custom_max = null;
+    setLayer();
+  }
+  function apply_custom_range() {
+
+    if (custom_min && custom_max) {
+      let max_to_min = custom_max - custom_min
+      scaling_factors = [];
+      for (let i = 1; i <= 10; i++) {
+        let v = custom_min + (max_to_min/10)*i
+        scaling_factors.push(v)
+      } 
+    }
+
+    setLayer()
+  }
 </script>
 
 {#if displayAreaLevel == "OA"}
@@ -209,11 +238,53 @@
 {/if}
 
 <div style="display: flex; top: 30px; right: 10px; font-size: 1rem; padding: 20px;">
-  OA: {OA}
+  OA/LSOA: {geo}
   <br/>
   {scoreLayer}: {hoverScore}
 
 </div>
+
+<div style="top: 150px; left: 10px; font-size: 1rem; padding: 20px;">
+  Set custom range:
+  <br/>
+  <br/>
+  <label for="min-input">Min:</label>
+  <input
+    id="min-input"
+    type="number"
+    title="Min"
+    style="float: right; font-size: 0.8rem;"
+    bind:value={custom_min}
+  />
+  <br/>
+  <br/>
+  <label for="max-input">Max:</label>
+  <input
+    id="max-input"
+    type="number"
+    title="Max"
+    style="float: right; font-size: 0.8rem;"
+    bind:value={custom_max}
+  />
+  <br/>
+  <br/>
+  <button 
+    id="resetButton"
+    on:click={apply_custom_range}
+    >
+    Apply custom range
+  </button>
+  <br/>
+  <br/>
+  <button 
+    id="resetButton"
+    on:click={reset_custom_scores}
+    >
+    Reset range to default
+  </button>
+
+</div>
+
 
 <style>
   div {
